@@ -1,0 +1,11 @@
+node_modules
+npm-debug.log
+storage/*.key
+storage/pail
+vendor
+.git
+.gitignore
+database/*.sqlite
+.env
+.env.*
+.DS_Store 
