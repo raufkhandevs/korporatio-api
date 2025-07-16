@@ -12,8 +12,26 @@ if [ ! -f /temp/korporatio_api ]; then
     chmod 777 /temp/korporatio_api
 fi
 
-# Run migrations (ignore errors if DB is locked)
-su www-data -s /bin/sh -c "php artisan migrate --force || true"
+# Generate application key if not set
+if [ -z "$APP_KEY" ] || [ "$APP_KEY" = "base64:" ]; then
+    su www-data -s /bin/sh -c "php artisan key:generate --force"
+fi
+
+# Clear and cache config
+su www-data -s /bin/sh -c "php artisan config:clear"
+su www-data -s /bin/sh -c "php artisan config:cache"
+
+# Run migrations with retry logic
+echo "Running database migrations..."
+for i in 1 2 3; do
+    if su www-data -s /bin/sh -c "php artisan migrate --force"; then
+        echo "Migrations completed successfully"
+        break
+    else
+        echo "Migration attempt $i failed, retrying..."
+        sleep 2
+    fi
+done
 
 # Start PHP-FPM and Nginx via supervisord
 exec "$@" 
