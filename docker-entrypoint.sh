@@ -1,13 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
-# Debug: Print environment variables
-echo "=== Environment Debug ==="
-echo "APP_ENV: $APP_ENV"
-echo "APP_DEBUG: $APP_DEBUG"
-echo "DB_CONNECTION: $DB_CONNECTION"
-echo "DB_DATABASE: $DB_DATABASE"
-echo "========================"
+echo "Starting Laravel application..."
 
 # Ensure storage and cache are writable
 chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
@@ -29,18 +23,9 @@ fi
 su www-data -s /bin/sh -c "php artisan config:clear"
 su www-data -s /bin/sh -c "php artisan config:cache"
 
-# Run migrations with retry logic
-echo "Running database migrations..."
-for i in 1 2 3; do
-    if su www-data -s /bin/sh -c "php artisan migrate --force"; then
-        echo "Migrations completed successfully"
-        break
-    else
-        echo "Migration attempt $i failed, retrying..."
-        sleep 2
-    fi
-done
+# Run migrations
+su www-data -s /bin/sh -c "php artisan migrate --force" || echo "Migration failed, continuing..."
 
-# Start PHP-FPM and Nginx via supervisord
-echo "Starting services..."
-exec "$@" 
+# Start PHP server
+echo "Starting PHP server on port 8080..."
+exec php artisan serve --host=0.0.0.0 --port=8080 
