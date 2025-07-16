@@ -1,5 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 set -e
+
+# Debug: Print environment variables
+echo "=== Environment Debug ==="
+echo "APP_ENV: $APP_ENV"
+echo "APP_DEBUG: $APP_DEBUG"
+echo "DB_CONNECTION: $DB_CONNECTION"
+echo "DB_DATABASE: $DB_DATABASE"
+echo "========================"
 
 # Ensure storage and cache are writable
 chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
@@ -34,4 +42,5 @@ for i in 1 2 3; do
 done
 
 # Start PHP-FPM and Nginx via supervisord
+echo "Starting services..."
 exec "$@" 

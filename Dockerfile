@@ -2,7 +2,7 @@
 FROM php:8.2-fpm-alpine as base
 
 # Install system dependencies
-RUN apk add --no-cache nginx supervisor curl git sqlite sqlite-dev libpng libpng-dev libjpeg-turbo-dev libwebp-dev libxpm-dev freetype-dev oniguruma-dev icu-dev zlib-dev libzip-dev libxml2-dev nodejs npm
+RUN apk add --no-cache nginx supervisor curl git sqlite sqlite-dev libpng libpng-dev libjpeg-turbo-dev libwebp-dev libxpm-dev freetype-dev oniguruma-dev icu-dev zlib-dev libzip-dev libxml2-dev nodejs npm bash
 
 # PHP extensions
 RUN docker-php-ext-install pdo pdo_sqlite mbstring zip exif pcntl bcmath intl xml gd
